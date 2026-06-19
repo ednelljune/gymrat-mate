@@ -16,10 +16,7 @@ const {
 const DATA_FILE = path.join(__dirname, "fitness-data.json");
 
 function loadData() {
-  if (!fs.existsSync(DATA_FILE)) {
-    return { checkins: {}, weights: {} };
-  }
-
+  if (!fs.existsSync(DATA_FILE)) return { checkins: {}, weights: {} };
   return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
 }
 
@@ -32,71 +29,35 @@ const client = new Client({
 });
 
 const commands = [
-  new SlashCommandBuilder()
-    .setName("motivate")
-    .setDescription("Get instant gym motivation."),
-
-  new SlashCommandBuilder()
-    .setName("roast")
-    .setDescription("Get playful toxic gym motivation."),
-
-  new SlashCommandBuilder()
-    .setName("protein")
-    .setDescription("Get a protein reminder."),
-
-  new SlashCommandBuilder()
-    .setName("bulk")
-    .setDescription("Get a lean bulk reminder."),
-
-  new SlashCommandBuilder()
-    .setName("water")
-    .setDescription("Get a hydration reminder."),
-
-  new SlashCommandBuilder()
-    .setName("legday")
-    .setDescription("Get a leg day reminder."),
-
-  new SlashCommandBuilder()
-    .setName("mealprep")
-    .setDescription("Get a meal prep reminder."),
-
-  new SlashCommandBuilder()
-    .setName("goggins")
-    .setDescription("Get hard-mode motivation."),
-
-  new SlashCommandBuilder()
-    .setName("checkin")
-    .setDescription("Log your workout for today."),
-
-  new SlashCommandBuilder()
-    .setName("streak")
-    .setDescription("Check your current workout streak."),
-
-  new SlashCommandBuilder()
-    .setName("leaderboard")
-    .setDescription("Show the workout check-in leaderboard."),
-
+  new SlashCommandBuilder().setName("motivate").setDescription("Instant gym motivation."),
+  new SlashCommandBuilder().setName("roast").setDescription("Fun-toxic gym roast."),
+  new SlashCommandBuilder().setName("protein").setDescription("Protein reminder."),
+  new SlashCommandBuilder().setName("bulk").setDescription("Lean bulk reminder."),
+  new SlashCommandBuilder().setName("water").setDescription("Hydration reminder."),
+  new SlashCommandBuilder().setName("legday").setDescription("Leg day reminder."),
+  new SlashCommandBuilder().setName("mealprep").setDescription("Meal prep reminder."),
+  new SlashCommandBuilder().setName("goggins").setDescription("Hard-mode motivation."),
+  new SlashCommandBuilder().setName("checkin").setDescription("Log today’s workout."),
+  new SlashCommandBuilder().setName("streak").setDescription("Check your workout streak."),
+  new SlashCommandBuilder().setName("leaderboard").setDescription("Workout leaderboard."),
   new SlashCommandBuilder()
     .setName("weight")
     .setDescription("Log your body weight.")
     .addNumberOption(option =>
-      option
-        .setName("kg")
-        .setDescription("Your body weight in kg")
-        .setRequired(true)
+      option.setName("kg").setDescription("Your weight in kg").setRequired(true)
     )
 ].map(command => command.toJSON());
 
-const motivationMessages = [
+const motivation = [
   "🔥 You do not need perfect motivation. You need one clean session today.",
   "🏋️ Train like future you is watching. Because he is.",
-  "📈 Tiny progress still compounds. Stack the reps.",
+  "📈 Small progress still compounds. Stack the reps.",
   "💪 Show up tired. Show up busy. Show up anyway.",
-  "🧠 Discipline is just self-respect with a schedule.",
+  "🧠 Discipline is self-respect with a schedule.",
   "🚀 One workout will not change everything, but skipping again keeps you the same."
 ];
 
-const roastMessages = [
+const roast = [
   "💀 The only heavy thing you lifted today better not be your phone.",
   "🤡 You want a dream body but negotiate with warm-up sets.",
   "👀 Bro opened Discord before opening the gym door.",
@@ -105,15 +66,15 @@ const roastMessages = [
   "🚨 No workout, no complaining about results."
 ];
 
-const proteinMessages = [
+const protein = [
   "🥩 Protein check. Hit your target before your muscles file a complaint.",
   "🍗 Chicken, eggs, tuna, Greek yogurt. Pick your fighter.",
   "💪 You cannot build muscle on vibes and one sad banana.",
   "🥛 Protein first. Random snacks later.",
-  "📊 Your training needs recovery. Recovery needs protein."
+  "📊 Training needs recovery. Recovery needs protein."
 ];
 
-const bulkMessages = [
+const bulk = [
   "🍚 Lean bulk reminder: eat enough, train hard, do not dirty bulk like a raccoon.",
   "📈 Scale slowly up. Strength slowly up. That is the bulk.",
   "🍌 Carbs are not the enemy. Weak workouts are.",
@@ -121,28 +82,49 @@ const bulkMessages = [
   "🔥 Build muscle, not just a collection of excuses."
 ];
 
-const waterMessages = [
+const water = [
   "💧 Drink water. Your pump is not powered by iced coffee alone.",
   "🚰 Hydrate before your body starts running on low battery mode.",
   "💦 Water check. Clear pee, clear mission.",
   "🧊 Your muscles need water. Stop being a dry raisin."
 ];
 
-const legdayMessages = [
+const legday = [
   "🦵 Leg day is not optional. Your upper body cannot carry the whole brand.",
   "💀 Skipping legs is character development in the wrong direction.",
   "🏋️ Squat, hinge, lunge. Build the foundation.",
   "🚨 Chicken legs detected. Report to the squat rack."
 ];
 
-const mealPrepMessages = [
+const mealprep = [
   "🍱 Meal prep reminder: chicken, rice, spinach. Stop overcomplicating greatness.",
   "🍚 Cook the food before hunger turns you into a delivery app victim.",
   "🥦 Meal prep is discipline you can eat.",
   "📦 Future you deserves ready meals, not panic snacks."
 ];
 
-const gogginsMessages = [
+const recovery = [
+  "😴 Sleep reminder. Muscle grows when you recover, not when you doom-scroll.",
+  "🛌 You cannot out-train bad sleep forever.",
+  "🌙 Recovery is part of the program. Go sleep like an athlete.",
+  "💤 Trying to bulk on 5 hours of sleep is NPC behavior."
+];
+
+const progress = [
+  "📸 Progress photo reminder. The mirror lies. Photos keep receipts.",
+  "📷 Take front, side, and back photos. Same lighting. Same pose. No ego.",
+  "👀 You will not notice weekly changes unless you track them.",
+  "📈 Progress photos > random mirror panic."
+];
+
+const weighin = [
+  "⚖️ Weekly weigh-in. Track the trend, not today’s emotional scale drama.",
+  "📊 One weigh-in means little. Weekly average tells the truth.",
+  "⚖️ Weigh in, log it, move on. No overthinking.",
+  "📈 Lean bulk rule: slow increase, better lifts, clean consistency."
+];
+
+const goggins = [
   "🔥 Hard mode: do the set you were trying to avoid.",
   "🛶 Who is going to carry the boats? Apparently you, after warm-up.",
   "🧠 Your mind quits first. Your body still has reps.",
@@ -174,11 +156,8 @@ function getUserStreak(userId, data) {
 
   for (let i = 0; i < 365; i++) {
     const key = dateKeyMinus(i);
-    if (userCheckins.includes(key)) {
-      streak++;
-    } else {
-      break;
-    }
+    if (userCheckins.includes(key)) streak++;
+    else break;
   }
 
   return streak;
@@ -189,7 +168,7 @@ function makeEmbed(title, description) {
     .setTitle(title)
     .setDescription(description)
     .setColor(0xff5733)
-    .setFooter({ text: "GymRat Mate • Fun-toxic fitness accountability" });
+    .setFooter({ text: "GymRat Mate V3 • Coach mode activated" });
 }
 
 async function registerCommands() {
@@ -214,61 +193,103 @@ async function sendScheduledMessage(title, message) {
   }
 }
 
+async function sendMentionMessage(title, message) {
+  try {
+    const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+
+    await channel.send({
+      content: process.env.CHECKIN_MENTION || "@everyone",
+      embeds: [makeEmbed(title, message)],
+      allowedMentions: {
+        parse: ["everyone", "roles"]
+      }
+    });
+  } catch (error) {
+    console.error("Mention message error:", error);
+  }
+}
+
 client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag}`);
 
   await registerCommands();
 
   await sendScheduledMessage(
-    "🏋️ GymRat Mate is online",
-    "No excuses. Your future physique is watching."
+    "🏋️ GymRat Mate V3 is online",
+    "Coach mode activated. Daily check-ins, night check-outs, reminders, and accountability are now live."
   );
 
-  cron.schedule(
-    "0 8 * * *",
-    async () => {
-      await sendScheduledMessage(
-        "🌅 8AM Coach Check",
-        `${randomFrom(motivationMessages)}\n\n${randomFrom(proteinMessages)}`
-      );
-    },
-    { timezone: "Australia/Melbourne" }
-  );
+  cron.schedule("0 7 * * *", async () => {
+    await sendMentionMessage(
+      "🌅 Daily Morning Check-In",
+      "Good morning team.\n\nHow are you feeling today?\nWhat is your plan for the day?\n\nReply using this format:\n\n**Mood:**\n**Workout plan:**\n**Nutrition goal:**\n**Steps/cardio goal:**\n**One thing you will not skip today:**\n\nNo ghosting. Accountability starts now."
+    );
+  }, { timezone: "Australia/Melbourne" });
 
-  cron.schedule(
-    "0 16 * * *",
-    async () => {
-      await sendScheduledMessage(
-        "🔥 4PM Gym Reminder",
-        `${randomFrom(roastMessages)}\n\n${randomFrom(bulkMessages)}`
-      );
-    },
-    { timezone: "Australia/Melbourne" }
-  );
+  cron.schedule("15 7 * * *", async () => {
+    await sendScheduledMessage(
+      "💧 7:15AM Hydration + Mindset",
+      `${randomFrom(motivation)}\n\n${randomFrom(water)}`
+    );
+  }, { timezone: "Australia/Melbourne" });
 
-  cron.schedule(
-    "0 12 * * *",
-    async () => {
-      await sendScheduledMessage(
-        "🥩 Midday Protein Check",
-        randomFrom(proteinMessages)
-      );
-    },
-    { timezone: "Australia/Melbourne" }
-  );
+  cron.schedule("0 8 * * *", async () => {
+    await sendScheduledMessage(
+      "🏋️ 8AM Training Reminder",
+      `${randomFrom(roast)}\n\n${randomFrom(protein)}`
+    );
+  }, { timezone: "Australia/Melbourne" });
 
-  cron.schedule(
-    "0 19 * * 0",
-    async () => {
-      await sendScheduledMessage(
-        "📊 Weekly Accountability",
-        "React mentally: 💪 trained 5+ times, 😐 trained 3–4 times, 💀 need to lock in next week."
-      );
-    },
-    { timezone: "Australia/Melbourne" }
-  );
+  cron.schedule("0 12 * * *", async () => {
+    await sendScheduledMessage(
+      "🥩 12PM Protein Check",
+      randomFrom(protein)
+    );
+  }, { timezone: "Australia/Melbourne" });
 
-  console.log("Reminders scheduled: 8AM, 12PM, 4PM, Sunday 7PM.");
+  cron.schedule("0 16 * * *", async () => {
+    await sendScheduledMessage(
+      "🔥 4PM Gym Reminder",
+      `${randomFrom(roast)}\n\n${randomFrom(bulk)}`
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  cron.schedule("0 21 * * *", async () => {
+    await sendMentionMessage(
+      "🌙 Daily Night Check-Out",
+      "End-of-day check-out.\n\nHow are you feeling after today?\nDid you complete your workout or movement goal?\nDid you hit your food/protein goal?\n\nReply using this format:\n\n**Mood:**\n**Workout done:** Yes/No\n**Nutrition:** On track / Needs work\n**Water:** Done / Needs work\n**Win of the day:**\n**Tomorrow’s focus:**\n\nBe honest. The dumbbells know."
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  cron.schedule("15 21 * * *", async () => {
+    await sendScheduledMessage(
+      "😴 9:15PM Recovery Reminder",
+      randomFrom(recovery)
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  cron.schedule("0 8 * * 1", async () => {
+    await sendScheduledMessage(
+      "⚖️ Monday Weekly Weigh-In",
+      randomFrom(weighin)
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  cron.schedule("0 10 * * 6", async () => {
+    await sendScheduledMessage(
+      "📸 Saturday Progress Photos",
+      randomFrom(progress)
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  cron.schedule("0 19 * * 0", async () => {
+    await sendScheduledMessage(
+      "📊 Sunday Accountability Check",
+      "React mentally:\n\n💪 Trained 5+ times\n😐 Trained 3–4 times\n💀 Need to lock in next week\n\nBe honest. The dumbbells know."
+    );
+  }, { timezone: "Australia/Melbourne" });
+
+  console.log("V3 reminders scheduled.");
 });
 
 client.on("interactionCreate", async interaction => {
@@ -279,59 +300,41 @@ client.on("interactionCreate", async interaction => {
   const username = interaction.user.username;
 
   if (interaction.commandName === "motivate") {
-    return interaction.reply({
-      embeds: [makeEmbed("🔥 Coach Motivation", randomFrom(motivationMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("🔥 Coach Motivation", randomFrom(motivation))] });
   }
 
   if (interaction.commandName === "roast") {
-    return interaction.reply({
-      embeds: [makeEmbed("💀 Fun-Toxic Roast", randomFrom(roastMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("💀 Fun-Toxic Roast", randomFrom(roast))] });
   }
 
   if (interaction.commandName === "protein") {
-    return interaction.reply({
-      embeds: [makeEmbed("🥩 Protein Check", randomFrom(proteinMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("🥩 Protein Check", randomFrom(protein))] });
   }
 
   if (interaction.commandName === "bulk") {
-    return interaction.reply({
-      embeds: [makeEmbed("🍚 Lean Bulk Reminder", randomFrom(bulkMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("🍚 Lean Bulk Reminder", randomFrom(bulk))] });
   }
 
   if (interaction.commandName === "water") {
-    return interaction.reply({
-      embeds: [makeEmbed("💧 Hydration Check", randomFrom(waterMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("💧 Hydration Check", randomFrom(water))] });
   }
 
   if (interaction.commandName === "legday") {
-    return interaction.reply({
-      embeds: [makeEmbed("🦵 Leg Day Police", randomFrom(legdayMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("🦵 Leg Day Police", randomFrom(legday))] });
   }
 
   if (interaction.commandName === "mealprep") {
-    return interaction.reply({
-      embeds: [makeEmbed("🍱 Meal Prep Coach", randomFrom(mealPrepMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("🍱 Meal Prep Coach", randomFrom(mealprep))] });
   }
 
   if (interaction.commandName === "goggins") {
-    return interaction.reply({
-      embeds: [makeEmbed("⚔️ Hard Mode", randomFrom(gogginsMessages))]
-    });
+    return interaction.reply({ embeds: [makeEmbed("⚔️ Hard Mode", randomFrom(goggins))] });
   }
 
   if (interaction.commandName === "checkin") {
     const today = todayKey();
 
-    if (!data.checkins[userId]) {
-      data.checkins[userId] = [];
-    }
+    if (!data.checkins[userId]) data.checkins[userId] = [];
 
     if (!data.checkins[userId].includes(today)) {
       data.checkins[userId].push(today);
@@ -344,7 +347,7 @@ client.on("interactionCreate", async interaction => {
       embeds: [
         makeEmbed(
           "✅ Workout Logged",
-          `🔥 ${username} completed a workout today.\nCurrent streak: **${streak} day(s)**\n\n${randomFrom(roastMessages)}`
+          `🔥 ${username} completed a workout today.\nCurrent streak: **${streak} day(s)**\n\n${randomFrom(roast)}`
         )
       ]
     });
@@ -365,21 +368,13 @@ client.on("interactionCreate", async interaction => {
 
   if (interaction.commandName === "leaderboard") {
     const leaderboard = Object.entries(data.checkins)
-      .map(([id, dates]) => ({
-        id,
-        total: dates.length
-      }))
+      .map(([id, dates]) => ({ id, total: dates.length }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
 
     if (leaderboard.length === 0) {
       return interaction.reply({
-        embeds: [
-          makeEmbed(
-            "📊 Leaderboard",
-            "No check-ins yet. Be the first to stop being allergic to effort."
-          )
-        ]
+        embeds: [makeEmbed("📊 Leaderboard", "No check-ins yet. Be the first to lock in.")]
       });
     }
 
@@ -396,22 +391,16 @@ client.on("interactionCreate", async interaction => {
     const kg = interaction.options.getNumber("kg");
     const today = todayKey();
 
-    if (!data.weights[userId]) {
-      data.weights[userId] = [];
-    }
+    if (!data.weights[userId]) data.weights[userId] = [];
 
-    data.weights[userId].push({
-      date: today,
-      kg
-    });
-
+    data.weights[userId].push({ date: today, kg });
     saveData(data);
 
     return interaction.reply({
       embeds: [
         makeEmbed(
           "⚖️ Weight Logged",
-          `${username}, weight logged: **${kg} kg**.\nCoach note: track the weekly average, not just one random scale mood swing.`
+          `${username}, weight logged: **${kg} kg**.\nCoach note: track weekly average, not one random scale mood swing.`
         )
       ]
     });
